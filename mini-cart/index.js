@@ -1,5 +1,5 @@
-// index.js
 const prompt = require('prompt-sync')();
+
 const EcommerceSystem = require('./cartSystem');
 
 const system = new EcommerceSystem();
@@ -9,38 +9,56 @@ function main() {
     system.listProducts();
 
     while (true) {
-        const command = prompt("> ").trim().toLowerCase();
-        
-        if (command.startsWith("add_to_cart")) {
-            const [_, productId, quantity] = command.split(" ");
-            system.addToCart(productId, parseInt(quantity));
-        }
+        const input = prompt("> ").trim();
+        const [command, ...args] = input.split(" ");
 
-        else if (command === "view_cart") {
-            system.viewCart();
-        }
+        switch (command) {
+            case "add_to_cart":
+                if (args.length === 2) {
+                    const productId = args[0];
+                    const quantity = parseInt(args[1]);
+                    if (!isNaN(quantity)) {
+                        system.addToCart(productId, quantity);
+                    } else {
+                        console.log("Invalid quantity.");
+                    }
+                } else {
+                    console.log("Usage: add_to_cart <productId> <quantity>");
+                }
+                break;
 
-        else if (command.startsWith("remove_from_cart")) {
-            const [_, productId, quantity] = command.split(" ");
-            system.removeFromCart(productId, parseInt(quantity));
-        }
+            case "remove_from_cart":
+                if (args.length === 2) {
+                    const productId = args[0];
+                    const quantity = parseInt(args[1]);
+                    if (!isNaN(quantity)) {
+                        system.removeFromCart(productId, quantity);
+                    } else {
+                        console.log("Invalid quantity.");
+                    }
+                } else {
+                    console.log("Usage: remove_from_cart <productId> <quantity>");
+                }
+                break;
 
-        else if (command === "list_discounts") {
-            system.listDiscounts();
-        }
+            case "view_cart":
+                system.viewCart();
+                break;
 
-        else if (command === "checkout") {
-            system.checkout();
-            break;
-        }
+            case "list_discounts":
+                system.listDiscounts();
+                break;
 
-        else if (command === "exit") {
-            console.log("Exiting the system.");
-            break;
-        }
+            case "checkout":
+                system.checkout();
+                return;
 
-        else {
-            console.log("Invalid command.");
+            case "exit":
+                console.log("Exiting the system.");
+                return;
+
+            default:
+                console.log("Invalid command.");
         }
     }
 }
